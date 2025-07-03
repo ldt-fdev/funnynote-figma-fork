@@ -27,7 +27,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuAction,
-  SidebarSeparator,
 } from '@/components/ui/sidebar';
 import {
   DropdownMenu,
@@ -39,12 +38,27 @@ import {
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
-interface AppSidebarProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onFileSelect: (file: any) => void;
+interface FileItem {
+  id: number;
+  name: string;
+  type: 'text' | 'drawing' | 'flashcard';
+  modified: string;
+  folderId?: string;
 }
 
-export function AppSidebar({ onFileSelect }: AppSidebarProps) {
+interface FolderItem {
+  id: string;
+  name: string;
+  files: FileItem[];
+}
+
+interface AppSidebarProps {
+  folders: FolderItem[];
+  onFileSelect: (file: FileItem) => void;
+  onCreateNew: () => void;
+}
+
+export function AppSidebar({ folders, onFileSelect, onCreateNew }: AppSidebarProps) {
   const [expandedFolders, setExpandedFolders] = useState<string[]>(['recent']);
 
   const toggleFolder = (folderId: string) => {
@@ -53,40 +67,40 @@ export function AppSidebar({ onFileSelect }: AppSidebarProps) {
     );
   };
 
-  const createOptions = [
-    { icon: FileText, label: 'Ghi chú bằng chữ', type: 'text' },
-    { icon: Palette, label: 'Bảng vẽ', type: 'drawing' },
-    { icon: Brain, label: 'Bộ thẻ ghi nhớ', type: 'flashcard' },
-    { icon: Folder, label: 'Thư mục mới', type: 'folder' },
-  ];
+  // const createOptions = [
+  //   { icon: FileText, label: 'Ghi chú bằng chữ', type: 'text' },
+  //   { icon: Palette, label: 'Bảng vẽ', type: 'drawing' },
+  //   { icon: Brain, label: 'Bộ thẻ ghi nhớ', type: 'flashcard' },
+  //   { icon: Folder, label: 'Thư mục mới', type: 'folder' },
+  // ];
 
-  const folders = [
-    {
-      id: 'recent',
-      name: 'Gần đây',
-      files: [
-        { id: 1, name: 'Ghi chú Machine Learning', type: 'text', modified: '2 giờ trước' },
-        { id: 2, name: 'Sơ đồ Vật lý', type: 'drawing', modified: '1 ngày trước' },
-        { id: 3, name: 'Thẻ ghi nhớ Lịch sử', type: 'flashcard', modified: '3 ngày trước' },
-      ],
-    },
-    {
-      id: 'mathematics',
-      name: 'Toán học',
-      files: [
-        { id: 4, name: 'Ghi chú Giải tích', type: 'text', modified: '1 tuần trước' },
-        { id: 5, name: 'Sơ đồ Hình học', type: 'drawing', modified: '2 tuần trước' },
-      ],
-    },
-    {
-      id: 'science',
-      name: 'Khoa học',
-      files: [
-        { id: 6, name: 'Ghi chú Phòng thí nghiệm Hóa học', type: 'text', modified: '3 ngày trước' },
-        { id: 7, name: 'Thẻ ghi nhớ Sinh học', type: 'flashcard', modified: '1 tuần trước' },
-      ],
-    },
-  ];
+  // const folders = [
+  //   {
+  //     id: 'recent',
+  //     name: 'Gần đây',
+  //     files: [
+  //       { id: 1, name: 'Ghi chú Machine Learning', type: 'text', modified: '2 giờ trước' },
+  //       { id: 2, name: 'Sơ đồ Vật lý', type: 'drawing', modified: '1 ngày trước' },
+  //       { id: 3, name: 'Thẻ ghi nhớ Lịch sử', type: 'flashcard', modified: '3 ngày trước' },
+  //     ],
+  //   },
+  //   {
+  //     id: 'mathematics',
+  //     name: 'Toán học',
+  //     files: [
+  //       { id: 4, name: 'Ghi chú Giải tích', type: 'text', modified: '1 tuần trước' },
+  //       { id: 5, name: 'Sơ đồ Hình học', type: 'drawing', modified: '2 tuần trước' },
+  //     ],
+  //   },
+  //   {
+  //     id: 'science',
+  //     name: 'Khoa học',
+  //     files: [
+  //       { id: 6, name: 'Ghi chú Phòng thí nghiệm Hóa học', type: 'text', modified: '3 ngày trước' },
+  //       { id: 7, name: 'Thẻ ghi nhớ Sinh học', type: 'flashcard', modified: '1 tuần trước' },
+  //     ],
+  //   },
+  // ];
 
   const getFileIcon = (type: string) => {
     switch (type) {
@@ -104,7 +118,7 @@ export function AppSidebar({ onFileSelect }: AppSidebarProps) {
   return (
     <Sidebar className="border-r border-gray-200">
       <SidebarHeader className="p-4">
-        <DropdownMenu>
+        {/* <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button className="w-full justify-start bg-blue-600 hover:bg-blue-700 text-white">
               <Plus className="mr-2 h-4 w-4" />
@@ -119,10 +133,14 @@ export function AppSidebar({ onFileSelect }: AppSidebarProps) {
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu> */}
+        <Button className="w-full justify-start bg-blue-600 hover:bg-blue-700 text-white" onClick={onCreateNew}>
+          <Plus className="mr-2 h-4 w-4" />
+          Tạo mới
+        </Button>
       </SidebarHeader>
 
-      <SidebarSeparator />
+      {/* <SidebarSeparator /> */}
 
       <SidebarContent className="px-2">
         {folders.map((folder) => (
@@ -165,9 +183,7 @@ export function AppSidebar({ onFileSelect }: AppSidebarProps) {
                           <SidebarMenuAction>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                {/* <Button variant="ghost" size="icon" className="h-6 w-6"> */}
                                 <MoreHorizontal className="h-3 w-3" />
-                                {/* </Button> */}
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
                                 <DropdownMenuItem>Đổi tên</DropdownMenuItem>
@@ -200,6 +216,7 @@ export function AppSidebar({ onFileSelect }: AppSidebarProps) {
                     <div className="text-sm font-medium">Nguyễn Văn A</div>
                     <div className="text-xs text-gray-500">anv@example.com</div>
                   </div>
+                  <MoreHorizontal className="h-3 w-3" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent side="top" className="w-56">

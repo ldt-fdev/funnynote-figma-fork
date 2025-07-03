@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
+import Image from 'next/image';
 
 export function Header() {
   return (
@@ -10,12 +11,7 @@ export function Header() {
       <div className="flex items-center space-x-4">
         <SidebarTrigger className="-ml-1" />
         <Separator orientation="vertical" className="mr-2 h-4" />
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">FN</span>
-          </div>
-          <h1 className="text-xl font-semibold text-gray-900">FunnyNote</h1>
-        </div>
+        <Image src="/funnynote-logo.png" alt="FunnyNote Logo" width={72} height={36} />
       </div>
 
       <div className="flex-1 max-w-md mx-8">
