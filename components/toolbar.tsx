@@ -100,7 +100,9 @@ export function Toolbar({ fileType, fileName, onGenerateFlashcards }: ToolbarPro
   return (
     <div className="h-12 border-b bg-gray-50 px-4 flex items-center justify-between">
       <div className="flex items-center space-x-4">
-        <h2 className="font-medium text-gray-900 truncate max-w-20">{fileName}</h2>
+        <h2 className={`font-medium text-gray-900 truncate ${fileType === 'text' ? 'max-w-20' : 'max-w-full'}`}>
+          {fileName}
+        </h2>
         <div className="flex items-center space-x-2">
           {fileType === 'text' && renderTextTools()}
           {fileType === 'drawing' && renderDrawingTools()}

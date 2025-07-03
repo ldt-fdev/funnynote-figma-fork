@@ -138,14 +138,18 @@ export function CreateNewDialog({ isOpen, onClose, onCreateNew, folders }: Creat
                   <SelectValue placeholder="Select a folder" />
                 </SelectTrigger>
                 <SelectContent>
-                  {folders.map((folder) => (
-                    <SelectItem key={folder.id} value={folder.id}>
-                      <div className="flex items-center">
-                        <Folder className="mr-2 h-4 w-4" />
-                        {folder.name}
-                      </div>
-                    </SelectItem>
-                  ))}
+                  {folders.map((folder) => {
+                    if (folder.id === 'recent') return null;
+
+                    return (
+                      <SelectItem key={folder.id} value={folder.id}>
+                        <div className="flex items-center">
+                          <Folder className="mr-2 h-4 w-4" />
+                          {folder.name}
+                        </div>
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             </div>
