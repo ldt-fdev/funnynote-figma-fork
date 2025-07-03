@@ -31,7 +31,6 @@ export const metadata: Metadata = {
     icon: '/funnynote-logo.png',
     apple: '/funnynote-logo.png',
   },
-  themeColor: '#ffffff',
   openGraph: {
     title: 'FunnyNote UI',
     description: 'Phiên bản giao diện người dùng của FunnyNote',

@@ -131,7 +131,7 @@ export function FlashcardPanel({
                           <Textarea
                             value={card.front}
                             onChange={(e) => updateFlashcard(card.id, 'front', e.target.value)}
-                            placeholder="Enter the question..."
+                            placeholder="Nhập câu hỏi..."
                             className="min-h-[60px] text-sm"
                           />
                         </div>
@@ -140,7 +140,7 @@ export function FlashcardPanel({
                           <Textarea
                             value={card.back}
                             onChange={(e) => updateFlashcard(card.id, 'back', e.target.value)}
-                            placeholder="Enter the answer..."
+                            placeholder="Nhập câu trả lời..."
                             className="min-h-[60px] text-sm"
                           />
                         </div>

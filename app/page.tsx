@@ -100,6 +100,7 @@ export default function NotePage() {
         back: 'Khái niệm chính bao trùm các nguyên tắc cơ bản của chủ đề với các giải thích và ví dụ chi tiết.',
       },
       {
+        id: 2,
         front: 'Điểm mấu chốt từ nội dung',
         back: 'Hiểu mối quan hệ giữa các yếu tố khác nhau và cách chúng tương tác trong các tình huống thực tế.',
       },
