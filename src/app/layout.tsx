@@ -25,6 +25,7 @@ export default function RootLayout({
 }
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
   title: 'FunnyNote UI',
   description: 'Phiên bản giao diện người dùng của FunnyNote',
   icons: {
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'FunnyNote UI',
     description: 'Phiên bản giao diện người dùng của FunnyNote',
-    url: 'https://funnynote-ui.vercel.app',
+    url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
     siteName: 'FunnyNote UI',
     images: [
       {
