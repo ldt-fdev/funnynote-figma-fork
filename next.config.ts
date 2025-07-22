@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
           {
             key: 'Content-Security-Policy',
             value:
-              'frame-ancestors https://note.funnycode.dev https://note.funnycode.vn https://funnycode.vn http://ftes.cloud http://localhost:3000', // hoặc '*', nếu bạn chấp nhận tất cả
+              'frame-ancestors https://note.funnycode.dev https://note.funnycode.vn https://funnycode.vn http://ftes.cloud http://localhost:3000 http://localhost:3003', // hoặc '*', nếu bạn chấp nhận tất cả
           },
           {
             key: 'X-Frame-Options',

@@ -130,3 +130,9 @@
   pointer-events: none;
   height: 0;
 }
+
+.prose * {
+  margin-top: 0;
+  margin-bottom: 0;
+  line-height: 1.65;
+}
