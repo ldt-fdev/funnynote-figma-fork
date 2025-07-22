@@ -1,0 +1,76 @@
+{
+  "flashcards": [
+    { "id": 1, "front": "Apple", "back": "Quả táo" },
+    { "id": 2, "front": "Book", "back": "Quyển sách" },
+    { "id": 3, "front": "Cat", "back": "Con mèo" },
+    { "id": 4, "front": "Dog", "back": "Con chó" },
+    { "id": 5, "front": "Eat", "back": "Ăn" },
+    { "id": 6, "front": "Go", "back": "Đi" },
+    { "id": 7, "front": "Happy", "back": "Vui vẻ / Hạnh phúc" },
+    { "id": 8, "front": "House", "back": "Ngôi nhà" },
+    { "id": 9, "front": "Run", "back": "Chạy" },
+    { "id": 10, "front": "Water", "back": "Nước" }
+  ],
+  "folders": [
+    {
+      "id": "recent",
+      "name": "Gần đây",
+      "files": [
+        {
+          "id": 1,
+          "name": "Ghi chú Tiếng Anh",
+          "type": "text",
+          "modified": "2 giờ trước"
+        },
+        {
+          "id": 2,
+          "name": "Sơ đồ Vật lý",
+          "type": "drawing",
+          "modified": "1 ngày trước"
+        },
+        {
+          "id": 3,
+          "name": "Thẻ ghi nhớ Lịch sử",
+          "type": "flashcard",
+          "modified": "3 ngày trước"
+        }
+      ]
+    },
+    {
+      "id": "mathematics",
+      "name": "Toán học",
+      "files": [
+        {
+          "id": 4,
+          "name": "Ghi chú Giải tích",
+          "type": "text",
+          "modified": "1 tuần trước"
+        },
+        {
+          "id": 5,
+          "name": "Phác thảo Hình học",
+          "type": "drawing",
+          "modified": "2 tuần trước"
+        }
+      ]
+    },
+    {
+      "id": "science",
+      "name": "Khoa học",
+      "files": [
+        {
+          "id": 6,
+          "name": "Ghi chú Hóa học",
+          "type": "text",
+          "modified": "3 ngày trước"
+        },
+        {
+          "id": 7,
+          "name": "Thẻ ghi nhớ Sinh học",
+          "type": "flashcard",
+          "modified": "1 tuần trước"
+        }
+      ]
+    }
+  ]
+}
