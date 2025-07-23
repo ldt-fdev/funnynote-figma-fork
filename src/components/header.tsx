@@ -4,6 +4,8 @@ import { Input } from '@/components/ui/input';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
+import Link from 'next/link';
+import { toast } from 'sonner';
 
 export function Header() {
   return (
@@ -11,7 +13,9 @@ export function Header() {
       <div className="flex items-center space-x-4">
         <SidebarTrigger className="-ml-1" />
         <Separator orientation="vertical" className="mr-2 h-4" />
-        <Image src="/funnynote-logo.png" alt="FunnyNote Logo" width={72} height={36} />
+        <Link href="/">
+          <Image src="/funnynote-logo.png" alt="FunnyNote Logo" width={72} height={36} />
+        </Link>
       </div>
 
       <div className="flex-1 max-w-md mx-8">
@@ -25,10 +29,20 @@ export function Header() {
       </div>
 
       <div className="flex items-center space-x-3">
-        <Button variant="ghost" size="icon" className="text-gray-600">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-gray-600"
+          onClick={() => toast.info('Chức năng này đang được phát triển')}
+        >
           <Bell className="w-5 h-5" />
         </Button>
-        <Button variant="ghost" size="icon" className="text-gray-600">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-gray-600"
+          onClick={() => toast.info('Chức năng này đang được phát triển')}
+        >
           <Settings className="w-5 h-5" />
         </Button>
       </div>
