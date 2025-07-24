@@ -1,3 +1,4 @@
+'use client';
 import { Search, Bell, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,7 +34,7 @@ export function Header() {
           variant="ghost"
           size="icon"
           className="text-gray-600"
-          onClick={() => toast.info('Chức năng này đang được phát triển')}
+          onClick={() => toast.info('Tính năng này đang được phát triển')}
         >
           <Bell className="w-5 h-5" />
         </Button>
@@ -41,7 +42,7 @@ export function Header() {
           variant="ghost"
           size="icon"
           className="text-gray-600"
-          onClick={() => toast.info('Chức năng này đang được phát triển')}
+          onClick={() => toast.info('Tính năng này đang được phát triển')}
         >
           <Settings className="w-5 h-5" />
         </Button>

@@ -2,7 +2,10 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/app/providers';
-// import { Chatbot } from '@/components/ai-chatbot';
+import { UserProvider } from '@/components/user-provider';
+import { AppSidebar } from '@/components/app-sidebar';
+import { Header } from '@/components/app-header';
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -22,9 +25,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Providers>{children}</Providers>
-        {/* Uncomment the line below to enable the AI chatbot component */}
-        {/* <Chatbot /> */}
+        <UserProvider initialUser={null}>
+          <Providers>
+            <SidebarProvider>
+              <div className="flex h-screen w-full bg-gray-50">
+                <AppSidebar />
+                <SidebarInset className="flex flex-col flex-1">
+                  <Header />
+                  {children}
+                </SidebarInset>
+              </div>
+            </SidebarProvider>
+          </Providers>
+        </UserProvider>
       </body>
     </html>
   );
