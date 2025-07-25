@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-'use client';
+import { cookies, headers as serverHeaders } from 'next/headers';
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
-interface RequestOptions extends RequestInit {
+interface RequestOptions extends Omit<RequestInit, 'body'> {
   params?: Record<string, string | number>;
   body?: any;
-  withCredentials?: boolean; // on/off cookie
+  withCredentials?: boolean;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:8081/api';
+const API_BASE = process.env.API_URL || 'http://localhost:8081/api';
 
 function buildUrl(endpoint: string, params?: Record<string, string | number>) {
   const url = new URL(`${API_BASE}${endpoint}`);
@@ -19,36 +19,36 @@ function buildUrl(endpoint: string, params?: Record<string, string | number>) {
   return url.toString();
 }
 
-function getToken() {
-  if (typeof document === 'undefined') return null;
-  const value = document.cookie.split('; ').find((row) => row.startsWith('accessToken='));
-  return value ? value.split('=')[1] : null;
+async function getServerToken() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('accessToken')?.value;
+  return token || null;
+}
+
+async function getUserAgent() {
+  const headersList = await serverHeaders();
+  return headersList.get('user-agent') || '';
 }
 
 async function request<T>(method: HttpMethod, endpoint: string, options: RequestOptions = {}): Promise<T> {
-  const {
-    params,
-    body,
-    headers: customHeaders,
-    withCredentials = false, // whether to include cookies
-    ...rest
-  } = options;
+  const { params, body, withCredentials = true, headers: customHeaders, ...rest } = options;
 
-  const token = getToken();
+  const token = withCredentials ? await getServerToken() : null;
+
+  const userAgent = await getUserAgent();
 
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
-    ...(token && { Authorization: `Bearer ${token}` }),
+    'User-Agent': userAgent,
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...customHeaders,
   };
-
-  console.log('Login request:', { body: JSON.stringify(body) });
 
   const res = await fetch(buildUrl(endpoint, params), {
     method,
     headers,
-    ...(body && { body: JSON.stringify(body) }),
-    credentials: withCredentials ? 'include' : 'omit',
+    body: body ? JSON.stringify(body) : undefined,
+    cache: 'no-store',
     ...rest,
   });
 
@@ -61,6 +61,7 @@ async function request<T>(method: HttpMethod, endpoint: string, options: Request
     (error as any).body = data;
     throw error;
   }
+
   return data;
 }
 

@@ -136,3 +136,13 @@
   margin-bottom: 0;
   line-height: 1.65;
 }
+
+.prose a {
+  /* text-gray-700 */
+  color: #1f2937;
+  text-decoration: underline;
+}
+
+.prose a:hover {
+  color: #2563eb; /* text-blue-600 */
+}

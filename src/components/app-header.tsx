@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 
 export function Header() {
   return (
-    <header className="h-16 border-b bg-white px-6 flex items-center justify-between shadow-sm">
+    <header className="sticky top-0 h-[8vh] border-b bg-white px-6 flex items-center justify-between shadow-sm">
       <div className="flex items-center space-x-4">
         <SidebarTrigger className="-ml-1" />
         <Separator orientation="vertical" className="mr-2 h-4" />

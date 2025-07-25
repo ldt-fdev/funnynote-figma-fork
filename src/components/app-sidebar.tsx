@@ -1,7 +1,9 @@
 'use client';
 // React imports
 import { useState, useEffect } from 'react';
-import { useUser } from '@/components/user-provider';
+import { useUser } from '@/components/contexts/user-provider';
+import { useFiles } from '@/components/contexts/files-provider';
+import { useFolders } from '@/components/contexts/folders-provider';
 // Next.js imports
 import { useRouter } from 'next/navigation';
 // Component imports
@@ -9,7 +11,8 @@ import { FileText, Palette, Brain, Folder, Plus, LogOut, LogIn } from 'lucide-re
 import { ChevronRight, ChevronDown, User, Settings, MoreHorizontal, LayoutDashboard } from 'lucide-react';
 // Component imports
 import { Button } from '@/components/ui/button';
-import { CreateNewDialog } from '@/components/create-new-dialog';
+import { CreateNewDialog } from '@/components/dialogs/create-new-dialog';
+import { ConfirmDialog } from '@/components/dialogs/confirm-dialog';
 import { SidebarMenuAction, SidebarSeparator } from '@/components/ui/sidebar';
 import { DropdownMenu, DropdownMenuContent } from '@/components/ui/dropdown-menu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
@@ -20,32 +23,62 @@ import { DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 // Library imports
 import { toast } from 'sonner';
-import { type MyInfoResponse, getMyInfo } from '@/lib/apis';
-interface FileItem {
-  id: string | number;
-  name: string;
-  type: 'text' | 'drawing' | 'flashcard';
-  modified: string;
-  folderId?: string;
-}
+import { type MyInfoResponse, getMyInfo, getRecentNotes, getFolderList, deleteNote } from '@/lib/apiClient';
 
 export function AppSidebar() {
+  const router = useRouter();
   const { user, setUser } = useUser();
+  const { files, setFiles, removeFile } = useFiles();
+  const { folders, setFolders } = useFolders();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState<MyInfoResponse['result'] | null>(null);
-
   const [expandedFolder, setExpandedFolder] = useState<boolean>(true);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [recentFolder, setRecentFolder] = useState<FileItem[]>([
-    {
-      id: 'recent',
-      name: 'Gần đây',
-      type: 'text',
-      modified: 'Vừa xong',
-    },
-  ]);
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
 
-  const router = useRouter();
+  useEffect(() => {
+    const fetchRecentFiles = async () => {
+      try {
+        const response = await getRecentNotes(4);
+        if (response.success) {
+          setFiles(
+            response.result.map((note) => ({
+              id: note.id,
+              title: note.title || 'Không có tiêu đề',
+              data: note.data,
+              type: 'text',
+            })),
+          );
+        } else {
+          toast.error('Không thể tải tệp gần đây.');
+        }
+      } catch (error) {
+        console.error('Error fetching recent files:', error);
+        toast.error('Lỗi khi tải tệp gần đây.');
+      }
+    };
+
+    fetchRecentFiles();
+  }, [setFiles]);
+
+  useEffect(() => {
+    const fetchFolders = async () => {
+      try {
+        const response = await getFolderList();
+        if (response.success) {
+          setFolders(response.result);
+        } else {
+          toast.error('Không thể tải danh sách thư mục.');
+        }
+      } catch (error) {
+        console.error('Error fetching folders:', error);
+        toast.error('Lỗi khi tải danh sách thư mục.');
+      }
+    };
+
+    fetchFolders();
+  }, [setFolders]);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -96,20 +129,32 @@ export function AppSidebar() {
     router.push('/');
   };
 
-  const onFileSelect = (file: FileItem) => {
-    // Handle file selection logic here
-    console.log('Selected file:', file);
-  };
-  const onCreateNew = () => {
-    // Handle create new file/folder logic here
-    console.log('Create new file/folder');
+  const handleRemoveNote = async (noteId: string | null) => {
+    if (noteId) {
+      try {
+        const response = await deleteNote(noteId);
+        if (response.success) {
+          removeFile(noteId);
+          toast.success('Đã xoá ghi chú');
+          router.push('/');
+        } else {
+          toast.error('Không thể xoá ghi chú');
+        }
+      } catch (error) {
+        toast.error('Không thể xoá ghi chú. Vui lòng thử lại sau.');
+        console.error('Error deleting note:', error);
+      }
+    }
   };
 
   return (
     <TooltipProvider>
       <Sidebar className="border-r border-gray-200">
         <SidebarHeader className="p-4">
-          <Button className="w-full justify-start bg-blue-600 hover:bg-blue-700 text-white" onClick={onCreateNew}>
+          <Button
+            className="w-full justify-start bg-blue-600 hover:bg-blue-700 text-white"
+            onClick={() => setShowCreateDialog(true)}
+          >
             <Plus className="mr-2 h-4 w-4" />
             Tạo mới
           </Button>
@@ -151,33 +196,31 @@ export function AppSidebar() {
               <CollapsibleContent>
                 <SidebarGroupContent>
                   <SidebarMenu>
-                    {recentFolder.map((file) => {
-                      const FileIcon = getFileIcon(file.type);
+                    {files.map((file) => {
+                      const FileIcon = getFileIcon(file.type || 'text');
                       return (
                         <SidebarMenuItem key={file.id}>
                           <SidebarMenuButton
-                            onClick={() => onFileSelect(file)}
+                            onClick={() => router.push(`/note/${file.id}`)}
                             className="w-full justify-start text-left hover:bg-gray-50"
                           >
                             <FileIcon className="mr-2 h-4 w-4 text-gray-500 flex-shrink-0" />
                             <div className="flex-1 min-w-0">
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <div className="text-sm font-medium text-gray-900 truncate">{file.name}</div>
+                                  <div className="text-sm font-medium text-gray-900 truncate">{file.title}</div>
                                 </TooltipTrigger>
                                 <TooltipContent side="right" className="max-w-xs">
                                   <div>
-                                    <p className="font-medium">{file.name}</p>
+                                    <p className="font-medium">{file.title}</p>
                                     <p className="text-xs text-gray-400 mt-1">
                                       {file.type === 'text' && 'Ghi chú văn bản'}
                                       {file.type === 'drawing' && 'Bảng vẽ'}
                                       {file.type === 'flashcard' && 'Thẻ ghi nhớ'}
                                     </p>
-                                    <p className="text-xs text-gray-400">Sửa đổi: {file.modified}</p>
                                   </div>
                                 </TooltipContent>
                               </Tooltip>
-                              <div className="text-xs text-gray-500">{file.modified}</div>
                             </div>
                           </SidebarMenuButton>
                           <SidebarMenuAction>
@@ -186,11 +229,27 @@ export function AppSidebar() {
                                 <MoreHorizontal className="h-3 w-3" />
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem>Đổi tên</DropdownMenuItem>
-                                <DropdownMenuItem>Di chuyển</DropdownMenuItem>
-                                <DropdownMenuItem>Nhân đôi</DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => toast.info('Vui lòng vào mục chỉnh sửa và bấm lưu lại')}
+                                >
+                                  Đổi tên
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => toast.info('Tính năng này đang được phát triển')}>
+                                  Di chuyển
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => toast.info('Tính năng này đang được phát triển')}>
+                                  Nhân đôi
+                                </DropdownMenuItem>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem className="text-red-600">Xoá</DropdownMenuItem>
+                                <DropdownMenuItem
+                                  className="text-red-600"
+                                  onClick={() => {
+                                    setSelectedNoteId(file.id);
+                                    setShowConfirmDialog(true);
+                                  }}
+                                >
+                                  Xoá
+                                </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
                           </SidebarMenuAction>
@@ -257,7 +316,17 @@ export function AppSidebar() {
           </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
-      <CreateNewDialog isOpen={false} onClose={() => {}} onCreateNew={() => {}} folders={[]} />
+      <CreateNewDialog isOpen={showCreateDialog} onClose={() => setShowCreateDialog(false)} folders={folders} />
+      <ConfirmDialog
+        isOpen={showConfirmDialog}
+        onOpenChange={setShowConfirmDialog}
+        title="Xác nhận xoá ghi chú"
+        description="Bạn có chắc chắn muốn xoá ghi chú này không?"
+        onConfirm={() => {
+          handleRemoveNote(selectedNoteId);
+          setShowConfirmDialog(false);
+        }}
+      />
     </TooltipProvider>
   );
 }

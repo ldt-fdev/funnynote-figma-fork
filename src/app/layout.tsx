@@ -2,10 +2,9 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/app/providers';
-import { UserProvider } from '@/components/user-provider';
-import { AppSidebar } from '@/components/app-sidebar';
-import { Header } from '@/components/app-header';
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
+import { UserProvider } from '@/components/contexts/user-provider';
+import { FilesProvider } from '@/components/contexts/files-provider';
+import { FoldersProvider } from '@/components/contexts/folders-provider';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -24,19 +23,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-y-auto`}>
         <UserProvider initialUser={null}>
-          <Providers>
-            <SidebarProvider>
-              <div className="flex h-screen w-full bg-gray-50">
-                <AppSidebar />
-                <SidebarInset className="flex flex-col flex-1">
-                  <Header />
-                  {children}
-                </SidebarInset>
-              </div>
-            </SidebarProvider>
-          </Providers>
+          <FoldersProvider initialFolders={[]}>
+            <FilesProvider initialFiles={[]}>
+              <Providers>
+                <main>{children}</main>
+              </Providers>
+            </FilesProvider>
+          </FoldersProvider>
         </UserProvider>
       </body>
     </html>
