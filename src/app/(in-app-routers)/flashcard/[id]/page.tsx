@@ -1,4 +1,6 @@
 import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
+import Loading from '../components/loading';
 import type { Metadata } from 'next';
 import { type FlashCardGroupResponse, getFlashCardGroup } from '@/lib/apiServer';
 import { FlashcardEditor } from '../components/flashcard-editor';
@@ -25,7 +27,11 @@ export default async function FlashcardEditorPage({ params }: { params: Promise<
     redirect(`/flashcard?getFlashCard=${id}&tab=edit`);
   }
 
-  return <FlashcardEditor initialFlashcards={flashcardGroup} id={id} />;
+  return (
+    <Suspense fallback={<Loading />}>
+      <FlashcardEditor initialFlashcards={flashcardGroup} id={id} />
+    </Suspense>
+  );
 }
 
 export const metadata: Metadata = {

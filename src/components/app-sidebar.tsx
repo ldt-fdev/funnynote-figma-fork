@@ -24,6 +24,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 // Library imports
 import { toast } from 'sonner';
 import { type MyInfoResponse, getMyInfo, getRecentNotes, getFolderList, deleteNote } from '@/lib/apiClient';
+import { getFlashCardList } from '@/lib/apiClient';
 
 export function AppSidebar() {
   const router = useRouter();
@@ -38,28 +39,35 @@ export function AppSidebar() {
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchRecentFiles = async () => {
+    const fetchAll = async () => {
       try {
-        const response = await getRecentNotes(4);
-        if (response.success) {
-          setFiles(
-            response.result.map((note) => ({
+        const [recent, flashcards] = await Promise.all([getRecentNotes(4), getFlashCardList()]);
+
+        const recentFiles = recent.success
+          ? recent.result.map((note) => ({
               id: note.id,
               title: note.title || 'Không có tiêu đề',
               data: note.data,
-              type: 'text',
-            })),
-          );
-        } else {
-          toast.error('Không thể tải tệp gần đây.');
-        }
+              type: 'text' as const,
+            }))
+          : [];
+
+        const flashCardFiles = flashcards.success
+          ? flashcards.result.map((card) => ({
+              id: card.id,
+              title: card.title || 'Thẻ ghi nhớ mới',
+              data: '',
+              type: 'flashcard' as const,
+            }))
+          : [];
+
+        setFiles([...recentFiles, ...flashCardFiles]);
       } catch (error) {
-        console.error('Error fetching recent files:', error);
-        toast.error('Lỗi khi tải tệp gần đây.');
+        toast.error('Lỗi khi tải dữ liệu.');
       }
     };
 
-    fetchRecentFiles();
+    fetchAll();
   }, [setFiles]);
 
   useEffect(() => {
@@ -201,7 +209,13 @@ export function AppSidebar() {
                       return (
                         <SidebarMenuItem key={file.id}>
                           <SidebarMenuButton
-                            onClick={() => router.push(`/note/${file.id}`)}
+                            onClick={() => {
+                              if (file.type === 'flashcard') {
+                                router.push(`/flashcard/${file.id}`);
+                              } else {
+                                router.push(`/note/${file.id}`);
+                              }
+                            }}
                             className="w-full justify-start text-left hover:bg-gray-50"
                           >
                             <FileIcon className="mr-2 h-4 w-4 text-gray-500 flex-shrink-0" />

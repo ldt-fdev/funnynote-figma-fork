@@ -134,6 +134,20 @@ export interface FlashCardGenerationResponse {
   };
 }
 
+export interface FlashCardListResponse {
+  success: boolean;
+  messageDTO: {
+    code: string;
+    message: string;
+  };
+  result: {
+    id: string;
+    noteId: string;
+    title: string;
+    description: string;
+  }[];
+}
+
 export const getMyInfo = (): Promise<MyInfoResponse> =>
   http.get<MyInfoResponse>('/users/my-info', {
     withCredentials: true,
@@ -254,5 +268,10 @@ export const generateFlashCardsFromNote = (
 export const getRecentNotes = (limit: number): Promise<NoteListResponse> =>
   http.get<NoteListResponse>('/notes/recent', {
     params: { limit },
+    withCredentials: true,
+  });
+
+export const getFlashCardList = (): Promise<FlashCardListResponse> =>
+  http.get<FlashCardListResponse>('/flashcards/groups/by-user', {
     withCredentials: true,
   });
