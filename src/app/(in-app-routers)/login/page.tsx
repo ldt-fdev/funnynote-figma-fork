@@ -1,17 +1,16 @@
-'use client';
-
-import { redirect } from 'next/navigation';
-import { useSearchParams } from 'next/navigation';
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://note.funnycode.vn';
-const FUNNYCODE_URL = process.env.NEXT_PUBLIC_FUNNYCODE_URL || process.env.FUNNYCODE_URL || 'https://funnycode.vn';
+import { Login } from './components/login-page';
+import { Metadata } from 'next';
+import { Suspense } from 'react';
+import Loading from './components/loading';
 
 export default function LoginPage() {
-  const searchParams = useSearchParams();
-  const originUrl = searchParams.get('originUrl') || undefined;
-
-  if (originUrl) {
-    return redirect('/');
-  }
-  return redirect(`${FUNNYCODE_URL}/vi/authentication?callbackUrl=${SITE_URL}`);
+  return (
+    <Suspense fallback={<Loading />}>
+      <Login />
+    </Suspense>
+  );
 }
+export const metadata: Metadata = {
+  title: 'Đăng nhập | FunnyNote',
+  description: 'Đăng nhập vào FunnyNote để truy cập các tính năng của ứng dụng',
+};

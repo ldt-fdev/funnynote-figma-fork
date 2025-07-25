@@ -63,6 +63,7 @@ export function AppSidebar() {
 
         setFiles([...recentFiles, ...flashCardFiles]);
       } catch (error) {
+        console.error('Error fetching recent files:', error);
         toast.error('Lỗi khi tải dữ liệu.');
       }
     };
