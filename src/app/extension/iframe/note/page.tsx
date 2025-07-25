@@ -1,11 +1,11 @@
-'use client';
-import { Iframe } from './components/extension-iframe';
-import { useSearchParams } from 'next/navigation';
+import dynamic from 'next/dynamic';
 
-export default function EditorPage() {
-  const searchParams = useSearchParams();
-  const videoUrl = searchParams.get('videoUrl');
-  const courseUrl = searchParams.get('courseUrl');
+// Import client component động
+const EditorClient = dynamic(() => import('./components/extension-page'), { ssr: false });
 
-  return <Iframe videoUrl={videoUrl} courseUrl={courseUrl} />;
+export default function EditorPage({ searchParams }: { searchParams: { [key: string]: string } }) {
+  const videoUrl = searchParams.videoUrl ?? null;
+  const courseUrl = searchParams.courseUrl ?? null;
+
+  return <EditorClient videoUrl={videoUrl} courseUrl={courseUrl} />;
 }
