@@ -1,11 +1,11 @@
-import dynamic from 'next/dynamic';
+import { EditorClient } from './components/extension-page';
+import { Suspense } from 'react';
+import Loading from './components/loading';
 
-// Import client component động
-const EditorClient = dynamic(() => import('./components/extension-page'), { ssr: false });
-
-export default function EditorPage({ searchParams }: { searchParams: { [key: string]: string } }) {
-  const videoUrl = searchParams.videoUrl ?? null;
-  const courseUrl = searchParams.courseUrl ?? null;
-
-  return <EditorClient videoUrl={videoUrl} courseUrl={courseUrl} />;
+export default function EditorPage() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <EditorClient />
+    </Suspense>
+  );
 }

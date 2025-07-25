@@ -1,7 +1,12 @@
 'use client';
 
 import { Iframe } from './extension-iframe';
+import { useSearchParams } from 'next/navigation';
 
-export default function EditorClient({ videoUrl, courseUrl }: { videoUrl: string | null; courseUrl: string | null }) {
+export function EditorClient() {
+  const searchParams = useSearchParams();
+  const videoUrl = searchParams.get('videoUrl') || null;
+  const courseUrl = searchParams.get('courseUrl') || null;
+
   return <Iframe videoUrl={videoUrl} courseUrl={courseUrl} />;
 }
